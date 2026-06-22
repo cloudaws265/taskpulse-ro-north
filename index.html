@@ -1219,6 +1219,7 @@ async function createTask() {
         toast('✅ Task updated!');
         editingTaskId = null;
         switchAdminTab('list');
+        loadLiveSummary(); // refresh landing page immediately after edit
       } else {
         toast('❌ Failed to update task');
         console.error(await res.text());
@@ -1258,6 +1259,7 @@ async function createTask() {
       const newTaskId = created[0].id;
       const count = targetBranches ? targetBranches.length : ALL_BRANCHES.length;
 
+      loadLiveSummary(); // refresh landing page immediately so new task shows without needing navigation
       showWaShareScreen(newTaskId, title, desc, deadline, count, section, official, !!attachment);
     } else {
       toast('❌ Failed to create task');
@@ -1327,7 +1329,11 @@ function closeDeleteOverlay() {
 async function executeDeleteTask() {
   if (!deleteTaskIdPending) return;
   try {
-    // Delete responses first (FK), then the task
+    // Delete dependent rows first (FK constraints), then the task itself
+    await fetch(`${SB_URL}/rest/v1/task_response_history?task_id=eq.${deleteTaskIdPending}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${SB_ANON}` }
+    });
     await fetch(`${SB_URL}/rest/v1/task_responses?task_id=eq.${deleteTaskIdPending}`, {
       method: 'DELETE',
       headers: { 'apikey': SB_ANON, 'Authorization': `Bearer ${SB_ANON}` }
