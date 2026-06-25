@@ -2458,12 +2458,14 @@ async function generateConsolidatedPendencyReport() {
     const todayStr = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
 
     // Brief WhatsApp message — detail lives in the attached PDF
+    const appUrl = window.location.origin + window.location.pathname;
     let brief = `*REGIONAL OFFICE BENGALURU NORTH*\n`;
     brief += `*CONSOLIDATED PENDENCY REPORT*\n`;
     brief += `📅 As on: ${todayStr}\n`;
     brief += `━━━━━━━━━━━━━━━━━━━━━━━━\n`;
     brief += `⚠️ *${dpcds.length} branch(es)* have pending action across *${tasks.length} task(s)*.\n`;
     brief += `📎 Detailed branch-wise report attached as PDF.\n\n`;
+    brief += `🔗 *Tap to update your status now:*\n${appUrl}\n\n`;
     brief += `Kindly update status on TaskPulse at the earliest.\n\n`;
     brief += buildRegardsBlock('GA SECTION', null);
 
